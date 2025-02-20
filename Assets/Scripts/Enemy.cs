@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 using UnityEngine.ProBuilder.Shapes;
+using UnityEditor;
+using System.Transactions;
+using Unity.VisualScripting;
 
 public class Enemy : MonoBehaviour
 {
-    private GameObject EnemyBody;
-    private Rigidbody EnemyRB;
     public Transform Target;
-    public Transform Spawn;
+    public Vector3 Spawn;
+    public float speed = 2f;
 
     void OnTriggerEnter(Collider other)
     {
@@ -23,25 +25,27 @@ public class Enemy : MonoBehaviour
     {
         if (other.name == "Player")
         {
-            Target = Spawn;
+            Target = null;
             Debug.Log("Player out of range, resume patrol");
         }
     }
     // Start is called before the first frame update
     void Start()
     {
-        Spawn.position = new Vector3(0, 0, 0);
-        GameObject EnemyBody = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-        EnemyBody.transform.position = Spawn.position;
-        EnemyRB = EnemyBody.AddComponent<Rigidbody>();
-        EnemyRB.useGravity = false;
+        Spawn = transform.position;
+        Target = null;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector3 directionToTarget = Target.position - EnemyBody.transform.position;
-        EnemyBody.transform.Translate(directionToTarget.normalized * Time.deltaTime *
-        2);
+        if (Target != null)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, Target.position, speed * Time.deltaTime);
+        }
+        else
+        {
+            transform.position = Vector3.MoveTowards(transform.position, Spawn, speed * Time.deltaTime);
+        }
     }
 }
