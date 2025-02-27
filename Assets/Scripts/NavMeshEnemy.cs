@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
-public class Enemy3 : MonoBehaviour
+public class NavMeshEnemy : MonoBehaviour
 {
     public Transform patrolRoute; // Parent containing waypoints
     public Transform player; // Player reference
